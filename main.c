@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define VERSION "0.0.2"
+#define VERSION "0.0.3"
 #define MAX_LEN 1024
 
 void add_item(char **data, int size) {
@@ -17,6 +17,28 @@ void add_item(char **data, int size) {
 		printf("%s ", data[i]);
 	}
 	printf("\n");
+
+	char type;
+	float amount = 0;
+
+	if (size != 4) {
+		printf("invalid 'add_item' command syntax\n");
+		return;
+	}
+
+	if (!(!strcmp(data[1], "income") || !strcmp(data[1], "inc") || !strcmp(data[1], "expense") || !strcmp(data[1], "exp"))) {
+		printf("invalid item type\n");
+		return;
+	}
+
+	type = data[1][0];
+	amount = strtof(data[2], NULL);
+	if (amount <= 0) {
+		printf("invalid amount\n");
+		return;
+	}
+
+	printf("%c\t%s\t%.2f\n", type, data[3], amount);
 }
 
 void edit_item(char **data, int size) {
@@ -112,7 +134,9 @@ int main(void) {
 		int size = 0;
 		char **data = get_input(line, &size);
 
-		exit_command = handle_command(data, size);
+		if (size != 0) {
+			exit_command = handle_command(data, size);
+		}
 
 		if (data != NULL) {
 			for (int i = 0; i < size; i++) {
